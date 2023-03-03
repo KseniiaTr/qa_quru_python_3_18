@@ -12,6 +12,7 @@ SHOP_URL = os.getenv("SHOP_URL")
 LOGIN = os.getenv("LOGIN")
 PASSWORD = os.getenv("PASSWORD")
 
+
 @allure.step("Open browser")
 def test_register():
     browser.open(SHOP_URL)
@@ -28,16 +29,14 @@ def test_register():
     with allure.step("Confirm"):
         browser.element("[id=register-button]").click()
 
+        browser.element(".account").should(have.text(LOGIN))
+
 
 def test_sigh_in(demoshop):
     response = demoshop.post("/login", json={"Email": "ivan_egor@mail.ru", "Password": "123456"}, allow_redirects=False)
     authorization_cookie = response.cookies.get("Nop.customer")
     print(authorization_cookie)
     print(response.status_code)
-
-    browser.driver.add_cookie({"name": "Nop.customer", "value": authorization_cookie})
-    browser.open(SHOP_URL)
-    browser.element(".account").should(have.text(LOGIN))
 
 
 def test_sigh_in_with_wrong_password(demoshop):
